@@ -32,10 +32,15 @@ deps_qogon = dependency('qogon')
 deps_protobuf = dependency('protobuf')
 
 translations_dir = join_paths(get_option('prefix'), 'share', 'qt5', 'translations')
-add_global_arguments([ 
-	'-DTRANSLATIONS_DIR="@0@"'.format(translations_dir)
-],	language: 'cpp',
+add_global_arguments(['-DTRANSLATIONS_DIR="@0@"'.format(translations_dir)],	language: 'cpp')
+
+# i18n translations
+trans_files = qt5.compile_translations(
+	ts_files: ['greeter_de.ts', 'greeter_fr.ts', 'greeter_en.ts', 'greeter_it.ts'],
+	install_dir: translations_dir,
+	install: true
 )
+
 greeter = executable('ogon-qt-greeter',
 	sources: [
 		'abstract_greeter.cpp',
@@ -43,15 +48,10 @@ greeter = executable('ogon-qt-greeter',
 		'nice_greeter.cpp',
 		'main.cpp',
 		generated_sbp_proto,
+		trans_files,
 		moc_files
 	],
 	dependencies: [deps_qt5, deps_qogon, deps_protobuf],
 	install: true,
 )
 
-# i18n translations
-qt5.compile_translations(
-	ts_files: ['greeter_de.ts', 'greeter_fr.ts', 'greeter_en.ts', 'greeter_it.ts',],
-	install_dir: translations_dir,
-	install: true
-) 
